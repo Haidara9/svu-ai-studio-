@@ -1,0 +1,7 @@
+{
+  "name": "Svu Ai Studio From Hedra",
+  "description": "رفيقك الأكاديمي Hedra",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
