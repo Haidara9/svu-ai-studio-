@@ -121,12 +121,15 @@ async function retry<T>(fn: () => Promise<T>, retries = 3, delay = 2000): Promis
             throw new UnsupportedFormatError("تنسيق الملف غير صالح أو تالف.");
         }
 
-        // 429 or Quota Exceeded -> Specific handling
+        // 429 or Quota Exceeded -> Specific handling with Aggressive Backoff
         if (msg.includes("429") || msg.includes("resource_exhausted") || msg.includes("quota")) {
             if (retries > 0) {
-                 console.warn(`Quota limit hit, retrying in ${delay}ms...`);
-                 await new Promise(resolve => setTimeout(resolve, delay));
-                 return retry(fn, retries - 1, delay * 2); 
+                 // Start with at least 10 seconds for quota issues to clear the RPM window
+                 const quotaDelay = Math.max(delay, 10000); 
+                 console.warn(`Quota limit hit (429). Retrying in ${quotaDelay/1000}s... (Attempts left: ${retries})`);
+                 await new Promise(resolve => setTimeout(resolve, quotaDelay));
+                 // Exponential backoff
+                 return retry(fn, retries - 1, quotaDelay * 2); 
             } else {
                  throw new QuotaExceededError("لقد استهلكت رصيدك المجاني من Google Gemini API مؤقتاً. يرجى الانتظار دقيقة قبل المحاولة.");
             }
@@ -140,10 +143,11 @@ async function retry<T>(fn: () => Promise<T>, retries = 3, delay = 2000): Promis
             msg.includes("fetch failed") || 
             msg.includes("timeout") || 
             msg.includes("networkerror") ||
-            msg.includes("error code: 6") || // Gemini specific XHR error code 6 (Network/Timeout)
-            msg.includes("rpc failed")
+            msg.includes("error code: 6") || 
+            msg.includes("rpc failed") ||
+            msg.includes("overloaded")
         )) {
-            console.warn(`Retrying operation... Attempts left: ${retries}`);
+            console.warn(`Network/Server error (${msg}). Retrying in ${delay}ms... (Attempts left: ${retries})`);
             await new Promise(resolve => setTimeout(resolve, delay));
             return retry(fn, retries - 1, delay * 2);
         }
@@ -443,7 +447,8 @@ export const GeminiService = {
 
   async transcribeAudio(base64Data: string, mimeType: string): Promise<string> {
     try {
-        // Increase retries to 5 and delay to 4000ms for uploads to handle heavy load/network issues
+        // Increase retries to 5 and start with 4000ms delay for uploads
+        // The retry function will handle quota backoff logic
         return await retry(async () => {
             let effectiveMimeType = mimeType;
             // Normalize audio types for stability

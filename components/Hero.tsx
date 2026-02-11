@@ -205,7 +205,8 @@ export const Hero: React.FC<HeroProps> = ({ theme, toggleTheme }) => {
                     const threshold = properties.connectDistance * (this.z * 0.8);
 
                     if (dist < threshold) {
-                        const lineAlpha = (1 - (dist / threshold)) * alpha * 0.3 * Math.min(this.spawnScale, p2.spawnScale); // Apply scale to alpha
+                        // Darkened grid lines: Reduced multiplier from 0.3 to 0.15
+                        const lineAlpha = (1 - (dist / threshold)) * alpha * 0.15 * Math.min(this.spawnScale, p2.spawnScale); 
                         if (lineAlpha > 0.005) {
                             ctx.beginPath();
                             ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${lineAlpha})`;

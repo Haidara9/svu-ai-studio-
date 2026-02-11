@@ -68,19 +68,8 @@ interface WorkspaceProps {
     onError?: (message: string) => void;
 }
 
-// Skeleton Components for Loaders
-const SkeletonText = () => (
-    <div className="space-y-4 animate-pulse w-full">
-        <div className="h-6 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4"></div>
-        <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-full"></div>
-        <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-5/6"></div>
-        <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-full"></div>
-        <div className="h-32 bg-zinc-100 dark:bg-zinc-800/50 rounded-xl w-full mt-6"></div>
-        <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-4/5"></div>
-    </div>
-);
+// --- Specific Skeleton Components ---
 
-// Progress Bar Component
 const GenerationProgress = ({ label }: { label: string }) => (
     <div className="w-full max-w-md mx-auto space-y-3">
         <div className="flex justify-between text-xs font-bold text-zinc-500 uppercase tracking-widest">
@@ -96,6 +85,109 @@ const GenerationProgress = ({ label }: { label: string }) => (
                 100% { transform: translateX(300%); }
             }
         `}</style>
+    </div>
+);
+
+const SummarySkeleton = () => (
+    <div className="bg-white/50 dark:bg-zinc-900/30 p-8 md:p-12 rounded-[50px] border border-zinc-200 dark:border-zinc-800 shadow-2xl animate-pulse w-full">
+        <div className="w-full max-w-md mx-auto mb-12">
+             <GenerationProgress label="Analyzing Content & Generating Summary" />
+        </div>
+        <div className="space-y-6">
+            <div className="h-8 bg-zinc-200 dark:bg-zinc-800/50 rounded-xl w-1/3 mb-8"></div>
+            <div className="space-y-3">
+                <div className="h-4 bg-zinc-200 dark:bg-zinc-800/50 rounded-lg w-full"></div>
+                <div className="h-4 bg-zinc-200 dark:bg-zinc-800/50 rounded-lg w-full"></div>
+                <div className="h-4 bg-zinc-200 dark:bg-zinc-800/50 rounded-lg w-5/6"></div>
+            </div>
+            <div className="space-y-3 pt-6">
+                <div className="h-4 bg-zinc-200 dark:bg-zinc-800/50 rounded-lg w-11/12"></div>
+                <div className="h-4 bg-zinc-200 dark:bg-zinc-800/50 rounded-lg w-full"></div>
+                <div className="h-4 bg-zinc-200 dark:bg-zinc-800/50 rounded-lg w-4/5"></div>
+            </div>
+            <div className="h-32 bg-zinc-100 dark:bg-zinc-800/30 rounded-2xl w-full mt-8"></div>
+        </div>
+    </div>
+);
+
+const QuizSkeleton = () => (
+    <div className="w-full max-w-4xl mx-auto space-y-8 animate-pulse p-4">
+        <div className="w-full max-w-md mx-auto mb-8">
+             <GenerationProgress label="Constructing Adaptive Quiz" />
+        </div>
+        
+        {/* Header */}
+        <div className="bg-zinc-100 dark:bg-zinc-900/50 h-20 rounded-3xl w-full border border-zinc-200 dark:border-zinc-800"></div>
+        
+        {/* Question Card */}
+        <div className="h-64 bg-zinc-100 dark:bg-zinc-900/50 rounded-[2.5rem] w-full border border-zinc-200 dark:border-zinc-800 relative overflow-hidden">
+             <div className="absolute inset-0 flex flex-col justify-center px-12 gap-6 items-center md:items-end opacity-50">
+                 <div className="h-4 w-24 bg-zinc-300 dark:bg-zinc-700 rounded-lg"></div>
+                 <div className="h-8 w-3/4 bg-zinc-300 dark:bg-zinc-700 rounded-xl"></div>
+                 <div className="h-8 w-1/2 bg-zinc-300 dark:bg-zinc-700 rounded-xl"></div>
+             </div>
+        </div>
+        
+        {/* Options */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[1, 2, 3, 4].map(i => (
+                <div key={i} className="h-24 bg-zinc-50 dark:bg-zinc-900/30 rounded-3xl border border-zinc-200 dark:border-zinc-800"></div>
+            ))}
+        </div>
+    </div>
+);
+
+const FlashcardSkeleton = () => (
+    <div className="w-full h-full flex flex-col items-center justify-center p-8 animate-pulse mt-10">
+         <div className="w-full max-w-md mx-auto mb-12">
+             <GenerationProgress label="Extracting Key Concepts" />
+        </div>
+        <div className="w-full max-w-2xl aspect-[16/10] bg-zinc-100 dark:bg-zinc-900/50 rounded-3xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center relative overflow-hidden shadow-lg">
+             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 opacity-50">
+                <div className="w-32 h-4 rounded-full bg-zinc-300 dark:bg-zinc-700"></div>
+                <div className="w-64 h-8 rounded-xl bg-zinc-300 dark:bg-zinc-700"></div>
+             </div>
+        </div>
+        <div className="flex gap-4 mt-8">
+            <div className="w-12 h-12 rounded-full bg-zinc-200 dark:bg-zinc-800"></div>
+            <div className="w-12 h-12 rounded-full bg-zinc-200 dark:bg-zinc-800"></div>
+        </div>
+    </div>
+);
+
+const ImagesSkeleton = () => (
+    <div className="w-full h-full p-8 animate-pulse">
+        <div className="w-full max-w-md mx-auto mb-12">
+             <GenerationProgress label="Generating Visual Context" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+             {[1, 2].map(i => (
+                 <div key={i} className="aspect-[4/3] rounded-3xl bg-zinc-100 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
+                    <PhotoIcon className="w-12 h-12 text-zinc-300 dark:text-zinc-700" />
+                 </div>
+             ))}
+        </div>
+    </div>
+);
+
+const StudySkeleton = () => (
+    <div className="w-full max-w-3xl mx-auto p-8 animate-pulse">
+        <div className="w-full max-w-md mx-auto mb-12">
+             <GenerationProgress label="Structuring Study Plan" />
+        </div>
+        <div className="space-y-8">
+            <div className="h-10 bg-zinc-200 dark:bg-zinc-800 rounded-xl w-3/4"></div>
+            <div className="space-y-4">
+                <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-full"></div>
+                <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-full"></div>
+                <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-5/6"></div>
+            </div>
+            <div className="h-48 bg-zinc-100 dark:bg-zinc-900/50 rounded-2xl w-full"></div>
+            <div className="space-y-4">
+                <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-full"></div>
+                <div className="h-4 bg-zinc-200 dark:bg-zinc-800 rounded w-4/5"></div>
+            </div>
+        </div>
     </div>
 );
 
@@ -587,12 +679,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                         <div className="h-full p-8 max-w-5xl mx-auto w-full">
                             <h2 className="text-4xl font-black mb-10 text-zinc-900 dark:text-white">ملخص المحاضرة</h2>
                             {isSummarizing ? (
-                                <div className="bg-white/50 dark:bg-zinc-900/30 p-12 rounded-[50px] border border-zinc-200 dark:border-zinc-800 shadow-2xl">
-                                    <GenerationProgress label="Generating Summary" />
-                                    <div className="mt-8">
-                                        <SkeletonText />
-                                    </div>
-                                </div>
+                                <SummarySkeleton />
                             ) : !summary ? (
                                 <div className="space-y-6 bg-white/50 dark:bg-zinc-900/50 p-10 rounded-[40px] border border-zinc-200 dark:border-zinc-800 text-center shadow-lg dark:shadow-none">
                                     <p className="text-zinc-600 dark:text-zinc-400 text-xl mb-6">اختر مستوى التفاصيل المطلوب للتلخيص:</p>
@@ -714,9 +801,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                                     </div>
                                     
                                     {isGeneratingQuiz ? (
-                                        <div className="w-full">
-                                            <GenerationProgress label="Generative Quiz Construction" />
-                                        </div>
+                                        <QuizSkeleton />
                                     ) : (
                                         <button 
                                             onClick={handleGenerateQuiz}
@@ -847,7 +932,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                                     </div>
                                     <div className="absolute bottom-0 w-full p-6 bg-gradient-to-t from-zinc-50 to-transparent dark:from-zinc-950 dark:to-transparent">
                                         <div className="max-w-4xl mx-auto flex gap-4 items-end">
-                                            <button onClick={toggleVoice} className={`w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all shrink-0 ${assistantState === 'listening' ? 'bg-red-500 animate-pulse' : 'bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700'}`}><MicrophoneSolid className={`w-6 h-6 md:w-7 md:h-7 ${assistantState === 'listening' ? 'text-white' : 'text-zinc-700 dark:text-white'}`} /></button>
+                                            <button onClick={toggleVoice} className={`w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all shrink-0 ${assistantState === 'listening' ? 'bg-red-500 animate-pulse' : 'bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300'}`}><MicrophoneSolid className={`w-6 h-6 md:w-7 md:h-7 ${assistantState === 'listening' ? 'text-white' : 'text-zinc-700 dark:text-white'}`} /></button>
                                             <form onSubmit={handleTextSubmit} className="flex-1 relative">
                                                 <textarea ref={chatInputRef} value={inputText} onChange={(e) => { setInputText(e.target.value); e.target.style.height = 'auto'; e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`; }} onKeyDown={handleKeyDown} placeholder="Shift+Enter لسطر جديد..." className="w-full bg-white/90 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-700 rounded-3xl px-8 py-4 text-zinc-900 dark:text-white text-lg focus:border-blue-500 outline-none resize-none max-h-[200px] scrollbar-hide shadow-xl" rows={1} />
                                                 <button type="submit" className="absolute left-4 bottom-3 text-blue-500 hover:text-blue-400 p-2"><PaperAirplaneSolid className="w-6 h-6 rotate-180" /></button>
@@ -877,9 +962,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                                     </h2>
                                     
                                     {isGeneratingImages ? (
-                                        <div className="w-full max-w-lg">
-                                             <GenerationProgress label="Generating Visual Concepts" />
-                                        </div>
+                                        <ImagesSkeleton />
                                     ) : generatedContextImages.length > 0 ? (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                                             {generatedContextImages.map((img, idx) => (
@@ -948,10 +1031,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                                 <div className="text-center py-20">
                                     <BookOpenIcon className="w-20 h-20 text-purple-500 mx-auto mb-6" />
                                     {isGeneratingStudy ? (
-                                         <div className="space-y-4 max-w-lg mx-auto">
-                                            <GenerationProgress label="Analyzing Study Plan" />
-                                            <SkeletonText />
-                                         </div>
+                                         <StudySkeleton />
                                     ) : (
                                         <button onClick={handleGenerateStudy} disabled={isGeneratingStudy} className="px-8 py-4 bg-purple-600 rounded-2xl text-white font-bold shadow-xl">تحليل خطة الدراسة</button>
                                     )}
@@ -967,12 +1047,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                         <div className="p-8">
                             {flashcards.length === 0 ? (
                                 isGeneratingFlashcards ? (
-                                    <div className="flex justify-center mt-20 w-full">
-                                         <div className="w-full max-w-md">
-                                            <GenerationProgress label="Generating Flashcards" />
-                                            <div className="mt-8 w-64 h-40 bg-zinc-200 dark:bg-zinc-800 rounded-xl animate-pulse mx-auto"></div>
-                                         </div>
-                                    </div>
+                                    <FlashcardSkeleton />
                                 ) : (
                                     <button onClick={handleGenerateFlashcards} className="px-8 py-4 bg-green-600 rounded-2xl text-white font-bold mx-auto block shadow-xl">توليد البطاقات</button>
                                 )
