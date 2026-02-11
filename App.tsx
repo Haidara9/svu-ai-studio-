@@ -12,6 +12,7 @@ import { GeminiService, FileTooLargeError, UnsupportedFormatError, NetworkTimeou
 import { AudioPlayer } from './components/AudioPlayer';
 import mammoth from 'mammoth';
 import { ExclamationTriangleIcon, CheckCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { HomeIcon, ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
 
 declare global {
   interface Window {
@@ -443,6 +444,37 @@ const App: React.FC = () => {
     }
   };
 
+  const handleSaveSession = () => {
+    if (transcript && fileName) {
+        const sessionData = {
+            transcript,
+            summary,
+            resources,
+            fileName,
+            timestamp: Date.now()
+        };
+        localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+        setNotification({ message: "تم حفظ الجلسة بنجاح. يمكنك العودة إليها لاحقاً.", type: 'success' });
+    } else {
+        setNotification({ message: "لا توجد بيانات كافية لحفظ الجلسة حالياً.", type: 'error' });
+    }
+  };
+
+  const handleGoHome = () => {
+    // Just clear local state to return to input view
+    // Do NOT clear SESSION_KEY from localStorage so user can resume later
+    setFile(null);
+    setAudioUrl(null);
+    setProcessingStatus('idle');
+    setSeekTime(null);
+    setUploadedImage(null);
+    setInitialMessage(null);
+    setFileName(undefined);
+    setProgress(0);
+    setEstimatedSeconds(0);
+    if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+  };
+
   const handleReset = () => {
     setFile(null);
     setAudioUrl(null);
@@ -485,18 +517,40 @@ const App: React.FC = () => {
                       <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">H</div>
                       <h1 className="text-zinc-900 dark:text-zinc-100 font-bold font-orbitron tracking-wide hidden md:block">SVU AI STUDIO</h1>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                       {audioUrl && (
                           <div className="w-64 hidden md:block" dir="ltr">
                               <AudioPlayer audioUrl={audioUrl} seekTo={seekTime} />
                           </div>
                       )}
-                      <div className="text-[10px] font-mono text-zinc-500 bg-zinc-100 dark:bg-zinc-900 px-2 py-1 rounded">
+                      
+                      {/* Save Button */}
+                      <button 
+                        onClick={handleSaveSession}
+                        className="p-2 text-zinc-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors border border-transparent hover:border-blue-200 dark:hover:border-blue-900/50"
+                        title="حفظ الجلسة"
+                      >
+                         <ArrowDownOnSquareIcon className="w-5 h-5" />
+                      </button>
+
+                      {/* Home Button */}
+                      <button 
+                        onClick={handleGoHome}
+                        className="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700"
+                        title="الرئيسية"
+                      >
+                         <HomeIcon className="w-5 h-5" />
+                      </button>
+
+                      <div className="text-[10px] font-mono text-zinc-500 bg-zinc-100 dark:bg-zinc-900 px-2 py-1 rounded border border-zinc-200 dark:border-zinc-800 hidden sm:block">
                           ID: {academicId}
                       </div>
+                      
+                      <div className="h-6 w-px bg-zinc-200 dark:bg-zinc-800 mx-1"></div>
+
                       <button 
                         onClick={handleReset}
-                        className="px-4 py-2 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-300 text-xs font-bold rounded-lg transition-colors border border-zinc-200 dark:border-zinc-700"
+                        className="px-4 py-2 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-300 text-xs font-bold rounded-lg transition-colors border border-zinc-200 dark:border-zinc-700 shadow-sm"
                       >
                         مشروع جديد
                       </button>

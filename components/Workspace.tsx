@@ -191,7 +191,7 @@ const StudySkeleton = () => (
     </div>
 );
 
-// Storage Key for UI Preferences
+// --- State Persistence Key ---
 const WORKSPACE_PREFS_KEY = 'svu_ai_workspace_prefs_v2';
 
 export const Workspace: React.FC<WorkspaceProps> = ({ 
@@ -213,7 +213,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
     onError
 }) => {
     
-    // --- Load UI Preferences ---
+    // 1. Load Saved Preferences from LocalStorage on Mount
     const savedPrefs = useMemo(() => {
         try {
             const saved = localStorage.getItem(WORKSPACE_PREFS_KEY);
@@ -221,7 +221,9 @@ export const Workspace: React.FC<WorkspaceProps> = ({
         } catch { return {}; }
     }, []);
 
-    // Initialize State with Fallback to Saved Prefs
+    // 2. Initialize State with priority logic: 
+    //    If initialMode is provided (e.g., uploading an image forces 'images' mode), use it.
+    //    Otherwise, fall back to saved preferences, then default to 'summary'.
     const [mode, setMode] = useState<ViewMode>(() => {
         if (initialMode && initialMode !== 'summary') return initialMode;
         return (savedPrefs.mode as ViewMode) || initialMode || 'summary';
@@ -231,7 +233,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
     const [useSearch, setUseSearch] = useState<boolean>(savedPrefs.useSearch || false);
     const [searchTerm, setSearchTerm] = useState<string>(savedPrefs.searchTerm || '');
 
-    // Persistent synchronization
+    // 3. Persist UI Preferences whenever they change
     useEffect(() => {
         const prefs = {
             mode,
